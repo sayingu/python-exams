@@ -66,10 +66,21 @@ class TSP:
             # select random two node indices
             i = 0 # EDIT THIS
             k = 0 # EDIT THIS
+
+# i = random.randint(1, len(path)-2) # Edit this
+# k = random.randint(i, len(path)-2) # Edit this
+# print(i, k)
+
             # slice the path with three segments (path1, path2, path3)
             path1 = [] # EDIT THIS
             path2 = [] # EDIT THIS
             path3 = [] # EDIT THIS
+
+# path1 = path[:i]
+# path2 = path[i:k]
+# path3 = path[k:]
+# path2.reverse()
+# path = path1 + path2 + path3
 
     def set_new_path(self, result, algorithmName):
         print('result:', result)
