@@ -55,6 +55,22 @@ class TSP:
     def calc_dist(self, node1, node2):
         return math.sqrt((node2[0] - node1[0]) ** 2 + (node2[1] - node1[1]) ** 2)
 
+    # 2-Opt Algorithm
+    def make_2opt_path(self):
+        # make a path
+        self.make_random_path()
+
+        # loop 100 times
+        for i in range(100):
+            # modify the current path
+            # select random two node indices
+            i = 0 # EDIT THIS
+            k = 0 # EDIT THIS
+            # slice the path with three segments (path1, path2, path3)
+            path1 = [] # EDIT THIS
+            path2 = [] # EDIT THIS
+            path3 = [] # EDIT THIS
+
     def set_new_path(self, result, algorithmName):
         print('result:', result)
         print('algorithmName:', algorithmName)
