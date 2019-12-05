@@ -1,14 +1,20 @@
 import random
 import math
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 
 class TSP:
-    nodes = [[random.randrange(0, 50), random.randrange(0, 20)]
-             for i in range(4)]
+    # nodes = [[random.randrange(0, 100), random.randrange(0, 100)]
+    #          for i in range(20)]
+    nodes = [[0, 1], [13, 20], [20, 85], [30, 1], [39, 70], [99, 75], [9, 17], [92, 74], [29, 10], [5, 20], [
+        34, 99], [52, 83], [90, 87], [64, 34], [23, 85], [46, 79], [33, 81], [44, 22], [33, 66], [21, 76]]
+
+    path = []
 
     # Random Algorithm
     def make_random_path(self):
-        result = list(range(4))
+        result = self.nodes
 
         random.shuffle(result)
 
@@ -60,33 +66,58 @@ class TSP:
         # make a path
         self.make_random_path()
 
+        result = self.path
+
         # loop 100 times
-        for i in range(100):
+        for i in range(100000):
             # modify the current path
             # select random two node indices
-            i = 0 # EDIT THIS
-            k = 0 # EDIT THIS
-
-# i = random.randint(1, len(path)-2) # Edit this
-# k = random.randint(i, len(path)-2) # Edit this
-# print(i, k)
+            j = random.randint(1, len(result)-2)
+            k = random.randint(j, len(result)-2)
 
             # slice the path with three segments (path1, path2, path3)
-            path1 = [] # EDIT THIS
-            path2 = [] # EDIT THIS
-            path3 = [] # EDIT THIS
+            path1 = result[:j]
+            path2 = result[j:k]
+            path3 = result[k:]
+            path2.reverse()
+            new_path = path1 + path2 + path3
+            pathLenth = self.calc_path_length(result)
+            if pathLenth > self.calc_path_length(new_path):
+                result = new_path
+                pathLenth = self.calc_path_length(new_path)
 
-# path1 = path[:i]
-# path2 = path[i:k]
-# path3 = path[k:]
-# path2.reverse()
-# path = path1 + path2 + path3
+            # self.draw(result, str(i) + ': ' + str(pathLenth), True)
+
+        self.set_new_path(result, '2-Opt Algorithm')
+
+    def calc_path_length(self, path):
+        dist = 0.0
+        for i in range(len(path) - 1):
+            dist += math.sqrt((path[i + 1][0] - path[i][0])
+                              ** 2 + (path[i + 1][1] - path[i][1]) ** 2)
+        return dist
 
     def set_new_path(self, result, algorithmName):
-        print('result:', result)
+        self.path = result
+        print('path:', self.path)
         print('algorithmName:', algorithmName)
+        distance = math.floor(self.calc_path_length(self.path))
+        print('distance:', distance)
+        self.draw(self.path, algorithmName + ': ' + str(distance), False)
+
+    def draw(self, result, title, clear):
+        plt.title(title)
+        plt.scatter([p[0] for p in self.nodes], [p[1] for p in self.nodes])
+        plt.plot([p[0] for p in result], [p[1] for p in result])
+        plt.draw()
+        plt.pause(.1)
+        if clear:
+            plt.clf()
 
 
 tsp = TSP()
-tsp.make_random_path()
-tsp.make_greedy_path()
+plt.ion()
+tsp.make_2opt_path()
+plt.ioff()
+with mpl.rc_context(rc={'interactive': False}):
+    plt.show()
