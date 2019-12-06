@@ -94,10 +94,10 @@ class TSP:
         
         # 모든 도시의 인덱스를 가지고 있는 임시 경로(result)를 생성
         # 모든 도시의 갯수: len(self.nodes)
-        result = [] # EDIT THIS
+        result = [node[0] for node in self.nodes] # EDIT THIS
 
         # 경로를 뒤섞음 (shuffle)
-        # EDIT THIS
+        random.shuffle(result) # EDIT THIS
 
         # 첫 도시 인덱스를 경로의 맨 뒤에 추가하여 경로를 닫음
         result.append( result[0] )
@@ -117,6 +117,7 @@ class TSP:
         
         # pool에서 꺼낸 도시 인덱스 하나를 result에 추가
         # EDIT THIS
+        result.append(pool.pop(0))
 
         # 남아있는 도시가 하나라도 있다면 계속 반복
         while len( pool ) > 0:
@@ -130,10 +131,10 @@ class TSP:
             for i in range(len(pool)):
                 
                 # result에서 가장 최근 추가된 도시의 인덱스를 n1로 가져옴
-                n1 = 0 # EDIT THIS
+                n1 = result[len(result) - 1] # EDIT THIS
 
                 # pool 안에 남아있는 도시의 중 하나를 가져옴
-                n2 = 0 # EDIT THIS
+                n2 = pool[i] # EDIT THIS
 
                 # self.calc_dist() 를 이용하여 거리를 계산 
                 dist = self.calc_dist(n1, n2)
@@ -143,10 +144,13 @@ class TSP:
                     # min_dist 와 min_index를 갱신
                     # EDIT THIS
                     # EDIT THIS
+                if min_dist is None or dist < min_dist:
+                    min_dist = dist
+                    min_index = i
 
             # 이제 min_index를 발견했으므로
             # pool의 min_index 를 꺼내서 result에 추가
-            pool.pop() # EDIT THIS
+            result.append(pool.pop(min_index)) # EDIT THIS
 
 
         # append the first node index to the last
@@ -160,27 +164,38 @@ class TSP:
     def make_2opt_path(self):
 
         # 무작위 경로 하나를 완성
-        self.make_random_path()
+        # self.make_random_path()
+        self.make_greedy_path()
 
         # 100 번 반복
-        for i in range(100):
+        for i in range(500):
             
             # 경로의 두 지점을 무작위로 선택 (슬라이드 참고)
             i = 0 # EDIT THIS
             k = 0 # EDIT THIS
+            j = random.randint(1, len(self.path)-2)
+            k = random.randint(j, len(self.path)-2)
 
             # 3개의 세그먼트로 분할 (path1, path2, path3)
             # 현재 경로에서 슬라이스를 얻는 방법: self.path[x:y]
             path1 = []  # EDIT THIS
             path2 = []  # EDIT THIS
             path3 = []  # EDIT THIS
+            path1 = self.path[:j]
+            path2 = self.path[j:k]
+            path3 = self.path[k:]
 
             # path2만 뒤집은 채 다시 결합 ( path1 + path2* + path3 )
             result = []  # EDIT THIS
+            path2.reverse()
+            result = path1 + path2 + path3
 
             # 만약 변경된 경로(result)가 기존(self.path)보다 줄어들었다면,
             if False:  # EDIT THIS
                 # 변경된 경로를 현재 경로로 저장
+                self.set_new_path( result, '2-Opt Algorithm' )
+            pathLenth = self.calc_path_length(self.path)
+            if pathLenth > self.calc_path_length(result):
                 self.set_new_path( result, '2-Opt Algorithm' )
 
 
@@ -268,9 +283,11 @@ class TSP:
     # update with a new path
     def set_new_path(self, path, method_text='UNNAMED'):
 
-        self.path = path.copy()
+        # self.path = path.copy()
+        self.path = path[:]
         self.path_length = self.calc_path_length(self.path)
-        self.path_to_be_uploaded = self.path.copy()
+        # self.path_to_be_uploaded = self.path.copy()
+        self.path_to_be_uploaded = self.path[:]
 
         self.method_text = method_text
         self.status_text = '{} - travel length = {:.2f}m'.format(self.method_text, self.path_length)        
